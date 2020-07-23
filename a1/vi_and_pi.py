@@ -95,7 +95,7 @@ def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
 
 	############################
 	# YOUR IMPLEMENTATION HERE #
-	
+
 	# for each state, look for action with greatest reward, make that the new policy
 	for state in range(nS):
 		possible_rewards = list()
@@ -166,6 +166,29 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3):
 	policy = np.zeros(nS, dtype=int)
 	############################
 	# YOUR IMPLEMENTATION HERE #
+
+
+	# update value_function
+	while True:
+		old_value_function = np.copy(value_function)
+		for state in range(nS):
+			possible_rewards = list()
+			for action in range(nA):
+				probability, nextstate, reward, terminal = P[state][action][0]
+				possible_rewards.append(reward + gamma * probability * value_function[nextstate])
+			value_function = np.max(possible_rewards)
+		
+		value_delta = np.sum(np.abs(value_function - old_value_function))
+		if value_delta < tol:
+			break
+
+	# extract policy 
+	for state in range(nS):
+		possible_rewards = list()
+		for action in range(nA):
+			probability, nextstate, reward, terminal = P[state][action][0]
+			possible_rewards.append(reward + gamma * probability * value_function[nextstate])
+		policy[state] = np.argmax(possible_rewards)
 
 
 	############################
